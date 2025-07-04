@@ -6,82 +6,120 @@ from rag_pipeline import load_vectorstore, build_qa_chain
 from loader import load_documents
 from difflib import SequenceMatcher
 
-# Załaduj zmienne środowiskowe
 load_dotenv()
 token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
-# Konfiguracja strony
-st.set_page_config(page_title="📚 AI Documentation Chatbot")
+st.set_page_config(page_title="LLM Doc Chatbot", layout="wide", initial_sidebar_state="collapsed")
 
-st.title("📚 AI Expert Chatbot")
-st.write("Zadaj pytanie na podstawie dokumentów...")
+# Dark mode + bąbelki CSS
+dark_mode_css = """
+<style>
+    /* Tło i tekst */
+    .main {
+        background-color: #121212;
+        color: #E0E0E0;
+    }
+    /* Ukryj menu i footer */
+    #MainMenu, footer, header {
+        visibility: hidden;
+    }
+    /* Bąbelki użytkownika */
+    .user-msg {
+        background-color: #2a2a2a;
+        color: #eee;
+        padding: 12px 18px;
+        border-radius: 18px 18px 0 18px;
+        margin: 8px 0 8px 20%;
+        max-width: 70%;
+        text-align: right;
+        float: right;
+        clear: both;
+        font-size: 15px;
+    }
+    /* Bąbelki bota */
+    .bot-msg {
+        background-color: #333333;
+        color: #ddd;
+        padding: 12px 18px;
+        border-radius: 18px 18px 18px 0;
+        margin: 8px 20% 8px 0;
+        max-width: 70%;
+        text-align: left;
+        float: left;
+        clear: both;
+        font-size: 15px;
+    }
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
+    }
+    /* Input */
+    .stTextInput>div>div>input {
+        background-color: #222 !important;
+        color: #eee !important;
+        border-radius: 8px;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+    }
+</style>
+"""
+st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# Jeśli nie ma bazy wektorowej, stwórz ją
+st.title("LLM Doc Chatbot")
+st.write("Zadaj pytanie na podstawie dokumentów")
+
+# Inicjuj historię w sesji
+if "history" not in st.session_state:
+    st.session_state.history = []
+
+# Jeśli nie ma bazy, buduj ją
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
         from rag_pipeline import create_vectorstore
         create_vectorstore(docs)
 
-# Załaduj bazę
 db = load_vectorstore()
-
-# Bezpieczne przypisanie tokena
-if not token:
-    token = ""
-
-# Inicjalizacja łańcucha QA
 qa_chain = build_qa_chain(db)
 
 def similarity(a, b):
+    from difflib import SequenceMatcher
     return SequenceMatcher(None, a, b).ratio()
 
-# Interfejs użytkownika
-query = st.text_input("Zadaj pytanie:")
+def ask_question(query):
+    # Dodaj do historii pytanie użytkownika
+    st.session_state.history.append({"role": "user", "content": query})
+
+    # Wywołaj model
+    result = qa_chain(query)
+
+    answer = result["result"]
+    st.session_state.history.append({"role": "bot", "content": answer, "sources": result.get("source_documents", [])})
+
+# Pole input bez label (placeholder)
+query = st.text_input("Zadaj pytanie...", key="input")
 
 if query:
-    with st.spinner("Szukam odpowiedzi..."):
-        result = qa_chain(query)
+    ask_question(query)
+    st.session_state.input = ""  # reset input
 
-        # Wyświetl odpowiedź
-        st.markdown("### 💡 Odpowiedź:")
-        st.markdown(result["result"])
-
-        source_docs = result.get("source_documents", [])
-
-        if source_docs:
-            # Sortuj wg podobieństwa do odpowiedzi
-            sorted_docs = sorted(
-                source_docs,
-                key=lambda d: similarity(d.page_content, result["result"]),
-                reverse=True
-            )
-
-            # Pokaż najlepsze źródło
-            top_doc = sorted_docs[0]
-            filename = top_doc.metadata.get("filename", "Nieznany plik")
-            page = top_doc.metadata.get("page", None)
-            source_info = f"{filename}"
-            if page is not None:
-                source_info += f", strona {page + 1}"
-
-            snippet = top_doc.page_content[:300].strip().replace("\n", " ")
-            st.markdown("### 📄 Najtrafniejsze źródło:")
-            st.markdown(f"**Źródło:** `{source_info}`")
-            st.markdown(f"> {snippet}...")
-
-            # Checkbox do pokazywania wszystkich źródeł
-            show_all = st.checkbox("Pokaż wszystkie cytowane źródła")
-
-            if show_all:
-                st.markdown("### 📄 Wszystkie cytowane źródła:")
-                for i, doc in enumerate(sorted_docs):
-                    filename = doc.metadata.get("filename", "Nieznany plik")
-                    page = doc.metadata.get("page", None)
-                    source_info = f"{filename}"
-                    if page is not None:
-                        source_info += f", strona {page + 1}"
-
-                    snippet = doc.page_content[:300].strip().replace("\n", " ")
-                    st.markdown(f"**{i + 1}. Źródło:** `{source_info}`")
-                    st.markdown(f"> {snippet}...")
+# Wyświetl historię chatu jako bąbelki
+for msg in st.session_state.history:
+    if msg["role"] == "user":
+        st.markdown(f'<div class="user-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
+    else:
+        st.markdown(f'<div class="bot-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
+        # Źródła pod odpowiedzią (opcjonalnie)
+        sources = msg.get("sources", [])
+        if sources:
+            st.markdown("**Źródła:**")
+            for i, doc in enumerate(sources):
+                filename = doc.metadata.get("filename", "Nieznany plik")
+                page = doc.metadata.get("page", None)
+                source_info = f"{filename}"
+                if page is not None:
+                    source_info += f", strona {page + 1}"
+                snippet = doc.page_content[:300].strip().replace("\n", " ")
+                st.markdown(f"{i+1}. `{source_info}` - {snippet}...")

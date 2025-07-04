@@ -68,14 +68,11 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
-# Inicjalizacja historii i inputu
+# Inicjalizacja historii w sesji
 if "history" not in st.session_state:
     st.session_state.history = []
 
-if "input_text" not in st.session_state:
-    st.session_state.input_text = ""
-
-# Jeśli brak bazy — buduj
+# Jeśli brak bazy — buduj ją
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
@@ -97,17 +94,7 @@ def ask_question(query):
         "sources": result.get("source_documents", [])
     })
 
-def clear_input():
-    st.session_state.input_text = ""
-
-# Input na samym dole z callbackiem do czyszczenia
-query = st.text_input("Zadaj pytanie:", value=st.session_state.input_text, key="input_text", on_change=clear_input)
-
-if query:
-    ask_question(query)
-    st.experimental_rerun()
-
-# Wyświetlanie historii (powyżej inputa)
+# Wyświetlanie historii chatu
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg">{msg["content"]}</div>', unsafe_allow_html=True)
@@ -130,3 +117,11 @@ for msg in st.session_state.history:
                         source_info += f", strona {page + 1}"
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. `{source_info}` - {snippet}...</div>', unsafe_allow_html=True)
+
+# Input na dole strony
+query = st.text_input("Zadaj pytanie:", key="input_text")
+
+if query:
+    ask_question(query)
+    st.session_state.input_text = ""
+    st.experimental_rerun()

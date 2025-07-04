@@ -1,54 +1,100 @@
 ---
-title: LLM Doc Chatbot
-sdk: streamlit
+title: AI Product Assistant
+emoji: ""
+colorFrom: slate
+colorTo: gray
+sdk: docker
+sdk_version: "1.0"
 app_file: app.py
+pinned: false
 ---
 
-# LLM Doc Chatbot
+#  LLM Doc Chatbot – Your AI Assistant for Document Understanding
 
-**LLM Doc Chatbot** to nowoczesna aplikacja typu Retrieval-Augmented Generation (RAG) do zadawania pytań na podstawie dokumentów.  
-Projekt integruje następujące technologie i komponenty:
+**LLM Doc Chatbot** is an intelligent assistant designed to answer questions based on your custom documents – like manuals, product sheets, internal wikis or policies.
 
-- **LangChain**: zarządzanie łańcuchem logiki, splitowanie i wyszukiwanie dokumentów.
-- **FAISS**: szybka i skalowalna baza wektorowa do wyszukiwania podobieństwa tekstu.
-- **Hugging Face Inference API**: korzystanie z potężnych modeli LLaMA 3.1-8B w trybie instrukcyjnym.
-- **Custom LLM Wrapper (`HFInferenceLLM`)**: klasa integrująca API Hugging Face z LangChain.
-- **Streamlit**: szybki, nowoczesny interfejs webowy z ciemnym trybem i chatbąbelkami.
-- **Dotenv**: zarządzanie sekretami i kluczami API w pliku `.env`.
-
-## Funkcjonalności:
-
-- Budowa bazy wiedzy na podstawie PDF i dokumentów tekstowych.
-- Wyszukiwanie odpowiedzi z dokładnym cytowaniem źródeł (plik, strona).
-- Intuicyjny interfejs czatu z historią pytań i odpowiedzi.
-- Tryb ciemny i nowoczesny, minimalistyczny design.
+This is a fully-featured Retrieval-Augmented Generation (RAG) application combining powerful LLMs with local vector search and an elegant chat interface.
 
 ---
+##  Technologies Used
 
-Zapraszam do testowania i rozwoju!  
-Projekt idealny jako pokaz umiejętności dla ról GenAI Engineer, ML Engineer, czy AI Researcher.
+- **LangChain** – for document splitting, embeddings, and QA pipelines.
+- **FAISS** – efficient vector database for semantic search over document chunks.
+- **Hugging Face Inference API** – access to LLaMA 3.1–8B Instruct model via hosted API.
+- **Custom `HFInferenceLLM`** – wrapper class connecting Hugging Face to LangChain seamlessly.
+- **Streamlit** – interactive and minimalist web UI with chat-style UX and dark mode.
+- **Dotenv** – secure API key management using environment variables.
 
 ---
 
-## Technologie
+## Key Features
 
-| Technologia           | Opis                                                       |
-|----------------------|------------------------------------------------------------|
-| Python               | Główny język programowania                                  |
-| LangChain            | Framework do łączenia modeli LLM z danymi i pipeline'ami   |
-| FAISS                | Biblioteka do wyszukiwania podobieństw wektorowych         |
-| Hugging Face Hub     | Hosting modeli i API do inference                           |
-| Streamlit            | Framework do szybkiego tworzenia web UI                    |
-| dotenv               | Łatwe zarządzanie sekretami i konfiguracją                  |
-
----
-
-## Jak uruchomić
-
-1. Skonfiguruj plik `.env` z kluczem `HUGGINGFACEHUB_API_TOKEN`.  
-2. Uruchom `streamlit run app.py` lokalnie.  
-3. Lub wrzuć na Hugging Face Spaces z odpowiednią konfiguracją.
+- Upload PDFs and plain-text docs to create a searchable knowledge base.
+- Ask questions in natural language and receive relevant answers with:
+  - **Citations** (file name and page)
+  - **Expandable sources** within each response
+- Clean, scrollable conversation with bubble-style layout.
+- Fully responsive dark theme for desktop and mobile.
+- Built-in loading indicators and UX safeguards.
 
 ---
 
-*Plik `rag_pipeline.py` zawiera logikę tworzenia i ładowania bazy FAISS oraz wywoływania modelu LLaMA.*
+## Tech Stack
+
+| Technology         | Purpose                                                    |
+|--------------------|------------------------------------------------------------|
+| Python             | Core programming language                                  |
+| LangChain          | LLM orchestration and retriever pipeline                   |
+| FAISS              | Fast vector-based search engine                            |
+| Hugging Face Hub   | Hosting and inference for open-source LLMs                 |
+| Streamlit          | Web-based UI framework                                     |
+| dotenv             | Secret and config management                               |
+
+---
+
+## How to Run Locally
+
+1. Clone the repository and add a `.env` file with your Hugging Face token:
+
+    ```bash
+    HUGGINGFACEHUB_API_TOKEN=hf_...
+    ```
+
+2. Run locally with Streamlit:
+
+    ```bash
+    streamlit run app.py
+    ```
+
+---
+
+## Deploy on Hugging Face Spaces
+
+This app is compatible with `streamlit` or `docker` SDKs. To deploy:
+- Choose a Space type (Streamlit recommended)
+- Upload your code and `.env` (via secrets)
+- Done 🎉
+
+---
+
+## Use Case Example
+
+This chatbot is ideal for:
+
+> Letting your clients interact with documentation such as product catalogs, internal processes, or legal policies – through intelligent search and chat.
+
+---
+
+## Project Scope
+
+This app serves as a **portfolio-level GenAI Engineering project**, showcasing my skills in:
+
+- RAG architecture
+- LLM API integration
+- Vector databases
+- UI/UX with Streamlit
+- Real-world deployment (HF Spaces)
+
+---
+
+*Main logic resides in `rag_pipeline.py`, where documents are chunked, embedded, stored in FAISS, and queried using the LLaMA model.*

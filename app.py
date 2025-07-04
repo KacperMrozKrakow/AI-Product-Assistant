@@ -97,7 +97,17 @@ def ask_question(query):
         "sources": result.get("source_documents", [])
     })
 
-# Wyświetlanie historii
+def clear_input():
+    st.session_state.input_text = ""
+
+# Input na samym dole z callbackiem do czyszczenia
+query = st.text_input("Zadaj pytanie:", value=st.session_state.input_text, key="input_text", on_change=clear_input)
+
+if query:
+    ask_question(query)
+    st.experimental_rerun()
+
+# Wyświetlanie historii (powyżej inputa)
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg">{msg["content"]}</div>', unsafe_allow_html=True)
@@ -120,11 +130,3 @@ for msg in st.session_state.history:
                         source_info += f", strona {page + 1}"
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. `{source_info}` - {snippet}...</div>', unsafe_allow_html=True)
-
-# Input na samym dole
-query = st.text_input("Zadaj pytanie:", value=st.session_state.input_text, key="input_text")
-
-if query:
-    ask_question(query)
-    st.session_state.input_text = ""
-    st.experimental_rerun()

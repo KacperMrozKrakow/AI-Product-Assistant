@@ -1,7 +1,6 @@
 ---
 title: AI Product Assistant
-emoji: ""
-colorFrom: slate
+colorFrom: indigo
 colorTo: gray
 sdk: docker
 sdk_version: "1.0"

@@ -6,11 +6,13 @@ from rag_pipeline import load_vectorstore, build_qa_chain
 from loader import load_documents
 from difflib import SequenceMatcher
 
+# Load HuggingFace token
 load_dotenv()
 token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
+# Dark mode + bubbles CSS
 dark_mode_css = """
 <style>
     .main {
@@ -20,25 +22,34 @@ dark_mode_css = """
     #MainMenu, footer, header {
         visibility: hidden;
     }
-    .user-msg, .bot-msg {
-        padding: 12px 18px;
-        border-radius: 18px;
-        margin: 10px 0;
-        max-width: 75%;
-        font-size: 15px;
-        clear: both;
-    }
     .user-msg {
         background-color: #2a2a2a;
         color: #eee;
-        margin-left: auto;
+        padding: 12px 18px;
+        border-radius: 18px 18px 0 18px;
+        margin: 8px 0 8px 20%;
+        max-width: 70%;
         text-align: right;
+        float: right;
+        clear: both;
+        font-size: 15px;
     }
     .bot-msg {
         background-color: #333333;
         color: #ddd;
-        margin-right: auto;
+        padding: 12px 18px;
+        border-radius: 18px 18px 18px 0;
+        margin: 8px 20% 8px 0;
+        max-width: 70%;
         text-align: left;
+        float: left;
+        clear: both;
+        font-size: 15px;
+    }
+    .clearfix::after {
+        content: "";
+        clear: both;
+        display: table;
     }
     .stTextInput>div>div>input {
         background-color: #222 !important;
@@ -59,6 +70,7 @@ dark_mode_css = """
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
+# Title and description
 st.title("AI Product Assistant")
 st.markdown("""
 Ten inteligentny asystent odpowiada na pytania w oparciu o dokumenty (np. PDF-y z ofertami, instrukcjami, katalogami).  
@@ -68,10 +80,11 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
+# Initialize chat history
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Budowanie bazy jeśli nie istnieje
+# Build knowledge base if missing
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
@@ -87,18 +100,31 @@ def similarity(a, b):
 def ask_question(query):
     st.session_state.history.append({"role": "user", "content": query})
     result = qa_chain(query)
+    answer = result["result"]
     st.session_state.history.append({
         "role": "bot",
-        "content": result["result"],
+        "content": answer,
         "sources": result.get("source_documents", [])
     })
 
-# Najpierw wyświetlamy historię (najstarsze na górze)
+# Callback to handle input submit and reset
+def handle_input():
+    query = st.session_state.input
+    if query:
+        ask_question(query)
+        st.session_state.input = ""
+        st.experimental_rerun()
+
+# Text input at the bottom with callback
+st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)
+
+# Display chat history above input
 for msg in st.session_state.history:
     if msg["role"] == "user":
-        st.markdown(f'<div class="user-msg">{msg["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="user-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
     else:
-        st.markdown(f'<div class="bot-msg">{msg["content"]}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="bot-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
+
         sources = msg.get("sources", [])
         if sources:
             with st.expander("📄 Pokaż źródła użyte do odpowiedzi"):
@@ -115,12 +141,3 @@ for msg in st.session_state.history:
                         source_info += f", strona {page + 1}"
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. `{source_info}` - {snippet}...</div>', unsafe_allow_html=True)
-
-# Input zawsze pod historią, nie ma resetowania stanu input_text dynamicznie - tylko nowa zmienna
-query = st.text_input("Zadaj pytanie:", key="input_text")
-
-if query:
-    ask_question(query)
-    # Wyczyść input i odśwież aby input był pusty
-    st.session_state.input_text = ""
-    st.experimental_rerun()

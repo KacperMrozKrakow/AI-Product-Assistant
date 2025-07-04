@@ -113,7 +113,7 @@ def handle_input():
     if query:
         ask_question(query)
         st.session_state.input = ""
-        st.experimental_rerun()
+        st.experimental_rerun
 
 # Text input at the bottom with callback
 st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)

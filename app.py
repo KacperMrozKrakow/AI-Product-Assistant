@@ -6,24 +6,22 @@ from rag_pipeline import load_vectorstore, build_qa_chain
 from loader import load_documents
 from difflib import SequenceMatcher
 
+# Załaduj token
 load_dotenv()
 token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="LLM Doc Chatbot", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bąbelki CSS
+# Styl CSS — dark mode + bąbelki
 dark_mode_css = """
 <style>
-    /* Tło i tekst */
     .main {
         background-color: #121212;
         color: #E0E0E0;
     }
-    /* Ukryj menu i footer */
     #MainMenu, footer, header {
         visibility: hidden;
     }
-    /* Bąbelki użytkownika */
     .user-msg {
         background-color: #2a2a2a;
         color: #eee;
@@ -36,7 +34,6 @@ dark_mode_css = """
         clear: both;
         font-size: 15px;
     }
-    /* Bąbelki bota */
     .bot-msg {
         background-color: #333333;
         color: #ddd;
@@ -54,7 +51,6 @@ dark_mode_css = """
         clear: both;
         display: table;
     }
-    /* Input */
     .stTextInput>div>div>input {
         background-color: #222 !important;
         color: #eee !important;
@@ -67,14 +63,15 @@ dark_mode_css = """
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
+# Nagłówek
 st.title("LLM Doc Chatbot")
 st.write("Zadaj pytanie na podstawie dokumentów")
 
-# Inicjuj historię w sesji
+# Inicjalizacja historii
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Jeśli nie ma bazy, buduj ją
+# Inicjalizacja bazy wiedzy
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
@@ -85,33 +82,35 @@ db = load_vectorstore()
 qa_chain = build_qa_chain(db)
 
 def similarity(a, b):
-    from difflib import SequenceMatcher
     return SequenceMatcher(None, a, b).ratio()
 
 def ask_question(query):
-    # Dodaj do historii pytanie użytkownika
     st.session_state.history.append({"role": "user", "content": query})
-
-    # Wywołaj model
     result = qa_chain(query)
-
     answer = result["result"]
-    st.session_state.history.append({"role": "bot", "content": answer, "sources": result.get("source_documents", [])})
+    st.session_state.history.append({
+        "role": "bot",
+        "content": answer,
+        "sources": result.get("source_documents", [])
+    })
 
-# Pole input bez label (placeholder)
-query = st.text_input("Zadaj pytanie...", key="input")
+# Obsługa inputu z resetem
+def handle_input():
+    query = st.session_state.input
+    if query:
+        ask_question(query)
+        st.session_state.input = ""
+        st.rerun()
 
-if query:
-    ask_question(query)
-    st.session_state.input = ""  # reset input
+# Pole tekstowe
+st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)
 
-# Wyświetl historię chatu jako bąbelki
+# Wyświetlanie historii jako bąbelki
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="bot-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
-        # Źródła pod odpowiedzią (opcjonalnie)
         sources = msg.get("sources", [])
         if sources:
             st.markdown("**Źródła:**")

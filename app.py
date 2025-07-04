@@ -68,19 +68,13 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
-# Inicjalizacja historii w sesji
+# Inicjalizacja historii
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Jeśli brak bazy — buduj ją
-if not Path("vectorstore/index.faiss").exists():
-    with st.spinner("Tworzę bazę wiedzy..."):
-        docs = load_documents("data/docs/")
-        from rag_pipeline import create_vectorstore
-        create_vectorstore(docs)
-
-db = load_vectorstore()
-qa_chain = build_qa_chain(db)
+# Inicjalizacja input_text tylko jeśli nie istnieje
+if "input_text" not in st.session_state:
+    st.session_state.input_text = ""
 
 def similarity(a, b):
     return SequenceMatcher(None, a, b).ratio()
@@ -94,7 +88,29 @@ def ask_question(query):
         "sources": result.get("source_documents", [])
     })
 
-# Wyświetlanie historii chatu
+def clear_input():
+    st.session_state.input_text = ""
+
+# Budowa bazy jeśli trzeba
+if not Path("vectorstore/index.faiss").exists():
+    with st.spinner("Tworzę bazę wiedzy..."):
+        docs = load_documents("data/docs/")
+        from rag_pipeline import create_vectorstore
+        create_vectorstore(docs)
+
+db = load_vectorstore()
+qa_chain = build_qa_chain(db)
+
+# Input na dole z callbackiem czyszczenia
+query = st.text_input("Zadaj pytanie:", key="input_text", on_change=clear_input)
+
+# Reagujemy tylko, gdy query jest niepuste i jest różne od pustego (bo input czyścimy w on_change)
+if query:
+    ask_question(query)
+    # Nie resetujemy tu input_text bezpośrednio, bo to robi callback
+    st.experimental_rerun()
+
+# Wyświetlanie historii powyżej input
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg">{msg["content"]}</div>', unsafe_allow_html=True)
@@ -117,11 +133,3 @@ for msg in st.session_state.history:
                         source_info += f", strona {page + 1}"
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. `{source_info}` - {snippet}...</div>', unsafe_allow_html=True)
-
-# Input na dole strony
-query = st.text_input("Zadaj pytanie:", key="input_text")
-
-if query:
-    ask_question(query)
-    st.session_state.input_text = ""
-    st.experimental_rerun()

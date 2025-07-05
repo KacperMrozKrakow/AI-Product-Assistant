@@ -15,31 +15,41 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 # Dark mode + bubbles CSS with darker gradient and centered text + input style fix
 dark_mode_css = """
 <style>
+    /* gradient na całej stronie */
     html, body {
         height: 100%;
-        min-height: 100%;
         margin: 0;
-        padding: 0;
-        background: linear-gradient(135deg, #03040a, #141b3d, #242b59, #1c1f3a);
+        background: linear-gradient(135deg, #05060d, #1a1c34, #2c2f57, #22223b) !important;
         background-attachment: fixed;
-        background-repeat: no-repeat;
-        background-size: cover;
         color: #E0E0E0 !important;
     }
-    .block-container {
+    /* wymusz tło gradientowe na głównym kontenerze Streamlit */
+    .main {
         background: transparent !important;
-        padding: 0 3rem 2rem 3rem;
+        min-height: 100vh;
+        padding-left: 3rem;
+        padding-right: 3rem;
         max-width: 900px;
-        margin: 0 auto;
-    }
-    /* Override Streamlit main container padding to center content */
-    .css-18e3th9 {
-        padding-left: 0 !important;
-        padding-right: 0 !important;
+        margin-left: auto;
+        margin-right: auto;
     }
     #MainMenu, footer, header {
         visibility: hidden;
     }
+    /* input */
+    .stTextInput>div>div>input {
+        background-color: #222 !important;
+        color: #ccc !important;
+        border-radius: 8px;
+        border: none;
+        padding: 10px;
+        font-size: 16px;
+    }
+    .stTextInput>div>div>input::placeholder {
+        color: #bbb !important;
+        opacity: 1 !important;
+    }
+    /* chat baloniki */
     .user-msg {
         background-color: #2a2a2a;
         color: #eee;
@@ -68,19 +78,6 @@ dark_mode_css = """
         content: "";
         clear: both;
         display: table;
-    }
-    .stTextInput>div>div>input {
-        background-color: #222 !important;
-        color: #ccc !important;
-        border-radius: 8px;
-        border: none;
-        padding: 10px;
-        font-size: 16px;
-    }
-    /* Placeholder text color */
-    .stTextInput>div>div>input::placeholder {
-        color: #bbb !important;
-        opacity: 1 !important;
     }
     .source-box {
         background-color: #1c1c1c;

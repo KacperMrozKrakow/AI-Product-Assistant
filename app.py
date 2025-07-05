@@ -12,16 +12,20 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bubbles CSS with gradient background
+# Dark mode + bubbles CSS with enforced gradient background
 dark_mode_css = """
 <style>
-    body, .main {
-        background: linear-gradient(135deg, #0b0c1a, #2c2c54, #4a4e69, #22223b);
+    html, body, .block-container {
+        background: linear-gradient(135deg, #0b0c1a, #2c2c54, #4a4e69, #22223b) !important;
         background-attachment: fixed;
-        color: #E0E0E0;
+        color: #E0E0E0 !important;
         min-height: 100vh;
         margin: 0;
         padding: 0;
+    }
+    /* Make Streamlit's main container transparent to show gradient */
+    .css-18e3th9 {
+        background-color: transparent !important;
     }
     #MainMenu, footer, header {
         visibility: hidden;

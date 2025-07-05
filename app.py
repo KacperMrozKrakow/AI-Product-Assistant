@@ -12,12 +12,14 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bubbles CSS
+# Dark mode + bubbles CSS with gradient background
 dark_mode_css = """
 <style>
     .main {
-        background-color: #121212;
+        /* Gradient background: dark navy to dark purple */
+        background: linear-gradient(135deg, #121212, #1a1a2e, #2c2c54);
         color: #E0E0E0;
+        min-height: 100vh;
     }
     #MainMenu, footer, header {
         visibility: hidden;
@@ -80,12 +82,9 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
-# Initialize chat history and loading flag
+# Initialize chat history
 if "history" not in st.session_state:
     st.session_state.history = []
-
-if "loading" not in st.session_state:
-    st.session_state.loading = False
 
 # Build knowledge base if missing
 if not Path("vectorstore/index.faiss").exists():
@@ -110,14 +109,12 @@ def ask_question(query):
         "sources": result.get("source_documents", [])
     })
 
-# Callback to handle input submit and reset loading state
+# Callback to handle input submit and reset
 def handle_input():
     query = st.session_state.input
     if query:
-        st.session_state.loading = True
         ask_question(query)
         st.session_state.input = ""
-        st.session_state.loading = False
 
 # Display chat history first
 for msg in st.session_state.history:
@@ -142,30 +139,6 @@ for msg in st.session_state.history:
                         source_info += f", strona {page + 1}"
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. {source_info} - {snippet}...</div>', unsafe_allow_html=True)
-
-# Show spinner during loading
-if st.session_state.loading:
-    st.markdown(
-        """
-        <div style="display:flex; justify-content:center; margin: 10px;">
-            <div style="
-                border: 4px solid rgba(255, 255, 255, 0.15);
-                border-top: 4px solid #09d3ac;
-                border-radius: 50%;
-                width: 30px;
-                height: 30px;
-                animation: spin 1s linear infinite;">
-            </div>
-        </div>
-        <style>
-        @keyframes spin {
-          0% { transform: rotate(0deg);}
-          100% { transform: rotate(360deg);}
-        }
-        </style>
-        """,
-        unsafe_allow_html=True,
-    )
 
 # Input at the bottom
 st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)

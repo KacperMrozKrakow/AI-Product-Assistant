@@ -12,7 +12,6 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bubbles CSS
 dark_mode_css = """
 <style>
     .main {
@@ -70,7 +69,6 @@ dark_mode_css = """
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# Title and description
 st.title("AI Product Assistant")
 st.markdown("""
 Ten inteligentny asystent odpowiada na pytania w oparciu o dokumenty (np. PDF-y z ofertami, instrukcjami, katalogami).  
@@ -80,11 +78,9 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
-# Initialize chat history
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Build knowledge base if missing
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
@@ -100,31 +96,25 @@ def similarity(a, b):
 def ask_question(query):
     st.session_state.history.append({"role": "user", "content": query})
     result = qa_chain(query)
-    answer = result["result"]
     st.session_state.history.append({
         "role": "bot",
-        "content": answer,
+        "content": result["result"],
         "sources": result.get("source_documents", [])
     })
 
-# Callback to handle input submit and reset
 def handle_input():
     query = st.session_state.input
-    if query:
+    if query and query.strip():
         ask_question(query)
         st.session_state.input = ""
-        st.experimental_rerun
 
-# Text input at the bottom with callback
 st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)
 
-# Display chat history above input
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="bot-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
-
         sources = msg.get("sources", [])
         if sources:
             with st.expander("📄 Pokaż źródła użyte do odpowiedzi"):

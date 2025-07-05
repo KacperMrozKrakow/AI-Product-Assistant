@@ -12,20 +12,23 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bubbles CSS with enforced gradient background
+# Dark mode + bubbles CSS with darker gradient and centered text + input style fix
 dark_mode_css = """
 <style>
     html, body, .block-container {
-        background: linear-gradient(135deg, #0b0c1a, #2c2c54, #4a4e69, #22223b) !important;
+        background: linear-gradient(135deg, #05060d, #1a1c34, #2c2f57, #22223b) !important;
         background-attachment: fixed;
         color: #E0E0E0 !important;
         min-height: 100vh;
         margin: 0;
-        padding: 0;
+        padding: 0 3rem 2rem 3rem;
+        /* padding sides for text centering */
     }
     /* Make Streamlit's main container transparent to show gradient */
     .css-18e3th9 {
         background-color: transparent !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
     }
     #MainMenu, footer, header {
         visibility: hidden;
@@ -35,8 +38,8 @@ dark_mode_css = """
         color: #eee;
         padding: 12px 18px;
         border-radius: 18px 18px 0 18px;
-        margin: 8px 0 8px 20%;
-        max-width: 70%;
+        margin: 8px 0 8px 25%;
+        max-width: 60%;
         text-align: right;
         float: right;
         clear: both;
@@ -47,8 +50,8 @@ dark_mode_css = """
         color: #ddd;
         padding: 12px 18px;
         border-radius: 18px 18px 18px 0;
-        margin: 8px 20% 8px 0;
-        max-width: 70%;
+        margin: 8px 25% 8px 0;
+        max-width: 60%;
         text-align: left;
         float: left;
         clear: both;
@@ -61,11 +64,17 @@ dark_mode_css = """
     }
     .stTextInput>div>div>input {
         background-color: #222 !important;
-        color: #eee !important;
+        color: #ccc !important;
         border-radius: 8px;
         border: none;
         padding: 10px;
         font-size: 16px;
+        /* Placeholder color */
+    }
+    /* Placeholder text color */
+    .stTextInput>div>div>input::placeholder {
+        color: #bbb !important;
+        opacity: 1 !important;
     }
     .source-box {
         background-color: #1c1c1c;

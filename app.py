@@ -15,9 +15,9 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 # Dark mode + bubbles CSS with gradient background
 dark_mode_css = """
 <style>
-   body, .main {
-        /* Gradient background: dark navy to dark purple */
-        background: linear-gradient(135deg, #121212, #1a1a2e, #2c2c54);
+    body, .main {
+        background: linear-gradient(135deg, #0b0c1a, #2c2c54, #4a4e69, #22223b);
+        background-attachment: fixed;
         color: #E0E0E0;
         min-height: 100vh;
         margin: 0;

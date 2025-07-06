@@ -93,26 +93,25 @@ dark_mode_css = """
 """
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# ---- UI: LEWA + PRAWA kolumna ----
+# ---- UI: LEFT + RIGHT columns ----
 col1, col2 = st.columns([2, 1])
 
 with col1:
     st.title("AI Product Assistant")
     st.markdown("""
-**Projekt demonstracyjny (RAG + LLM)** — chatbot wspierający klienta w decyzjach zakupowych.  
-Został stworzony jako przykład aplikacji **GenAI typu Retrieval-Augmented Generation (RAG)**  
-dla firm, które chcą umożliwić użytkownikowi zadawanie pytań na podstawie swoich ofert i katalogów produktowych.
+**AI Product Assistant – chatbot oparty na Retrieval-Augmented Generation (RAG)**  
+Zaawansowany asystent AI wspierający klientów w podejmowaniu decyzji zakupowych poprzez połączenie dużych modeli językowych (LLM) z niestandardową bazą wektorową. System został wytrenowany specjalnie na podstawie parametrów technicznych i specyfikacji smartfonów Samsung wymienionych po prawej stronie, co umożliwia precyzyjne i kontekstowe odpowiedzi z podaniem źródeł.
 
-Bot przeszukuje dokumenty w formacie PDF (np. dane techniczne, porównania, opisy modeli) i  
-odpowiada w języku naturalnym — wraz z cytatami ze źródeł.  
-Można go użyć np. w sklepie internetowym lub dziale obsługi klienta.
+Chatbot wykorzystuje Pythona i LangChain do orkiestracji procesu RAG, FAISS do efektywnego wyszukiwania podobieństw oraz dostrojony model LLaMA 3.1 hostowany na Hugging Face Hub. Przetwarza obszerne katalogi produktów i techniczne pliki PDF, aby rozumieć pytania w języku naturalnym i na bieżąco dostarczać relewantne informacje.
 
-**Przykładowe pytania:**
-- *Który telefon ma najwięcej RAM-u?*
-- *Czym różni się Galaxy S25 Ultra od S24 FE?*
-- *Czy Galaxy Z Flip 6 obsługuje Dual SIM?*
+Projekt demonstruje praktyczne umiejętności inżynierii GenAI, w tym embedding dokumentów, wyszukiwanie wektorowe, integrację LLM oraz przyjazny interfejs użytkownika, co czyni go idealnym rozwiązaniem dla e-commerce i działów obsługi klienta.
 
-⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
+**Przykładowe pytania:**  
+- *Który telefon ma najwięcej pamięci RAM?*  
+- *Jakie są różnice między Galaxy S25 Ultra a S24 FE?*  
+- *Czy Galaxy Z Flip 6 obsługuje Dual SIM?*  
+
+⏳ **Proszę chwilę poczekać, aż aplikacja się załaduje...**  
 """)
 
 with col2:
@@ -126,7 +125,7 @@ with col2:
 - **Galaxy XCover 6**
     """)
 
-# ---- Logika chatbota ----
+# ---- Chatbot logic ----
 if "history" not in st.session_state:
     st.session_state.history = []
 
@@ -182,3 +181,13 @@ for msg in st.session_state.history:
                     st.markdown(f'<div class="source-box">{i+1}. {source_info} - {snippet}...</div>', unsafe_allow_html=True)
 
 st.text_input(label="", key="input", on_change=handle_input, placeholder="Zadaj pytanie...")
+
+# Footer - Made by Kacper Mróz
+st.markdown(
+    """
+    <div style="text-align:center; font-size:12px; color:#888; margin-top: 40px;">
+        Made by <strong>Kacper Mróz</strong>, 2025
+    </div>
+    """,
+    unsafe_allow_html=True
+)

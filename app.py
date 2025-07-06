@@ -72,14 +72,14 @@ dark_mode_css = """
     }
     .stTextInput>div>div>input {
         background-color: #222 !important;
-        color: #fff !important;       /* jaśniejszy tekst */
+        color: #fff !important;
         border-radius: 8px;
         border: none;
         padding: 10px;
         font-size: 16px;
     }
     .stTextInput>div>div>input::placeholder {
-        color: #fff !important;       /* biały placeholder */
+        color: #fff !important;
         opacity: 1 !important;
     }
     .source-box {
@@ -91,13 +91,14 @@ dark_mode_css = """
     }
 </style>
 """
-
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
-# Title and description
-st.title("AI Product Assistant")
+# ---- UI: LEWA + PRAWA kolumna ----
+col1, col2 = st.columns([2, 1])
 
-st.markdown("""
+with col1:
+    st.title("AI Product Assistant")
+    st.markdown("""
 **Projekt demonstracyjny (RAG + LLM)** — chatbot wspierający klienta w decyzjach zakupowych.  
 Został stworzony jako przykład aplikacji **GenAI typu Retrieval-Augmented Generation (RAG)**  
 dla firm, które chcą umożliwić użytkownikowi zadawanie pytań na podstawie swoich ofert i katalogów produktowych.
@@ -106,7 +107,7 @@ Bot przeszukuje dokumenty w formacie PDF (np. dane techniczne, porównania, opis
 odpowiada w języku naturalnym — wraz z cytatami ze źródeł.  
 Można go użyć np. w sklepie internetowym lub dziale obsługi klienta.
 
-Przykładowe pytania:
+**Przykładowe pytania:**
 - *Który telefon ma najwięcej RAM-u?*
 - *Czym różni się Galaxy S25 Ultra od S24 FE?*
 - *Czy Galaxy Z Flip 6 obsługuje Dual SIM?*
@@ -114,11 +115,21 @@ Przykładowe pytania:
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
 
-# Initialize chat history
+with col2:
+    st.markdown("### 🗂️ Modele w bazie wiedzy:")
+    st.markdown("""
+- **Galaxy A56**  
+- **Galaxy S24 / S24 FE / S24+ / S24 Ultra**  
+- **Galaxy S25 / S25 Edge / S25+**  
+- **Galaxy Z Flip 6**  
+- **Galaxy Z Fold 5 / Z Fold 6**  
+- **Galaxy XCover 6**
+    """)
+
+# ---- Logika chatbota ----
 if "history" not in st.session_state:
     st.session_state.history = []
 
-# Build knowledge base if missing
 if not Path("vectorstore/index.faiss").exists():
     with st.spinner("Tworzę bazę wiedzy..."):
         docs = load_documents("data/docs/")
@@ -141,14 +152,12 @@ def ask_question(query):
         "sources": result.get("source_documents", [])
     })
 
-# Callback to handle input submit and reset
 def handle_input():
     query = st.session_state.input
     if query:
         ask_question(query)
         st.session_state.input = ""
 
-# Display chat history first
 for msg in st.session_state.history:
     if msg["role"] == "user":
         st.markdown(f'<div class="user-msg clearfix">{msg["content"]}</div>', unsafe_allow_html=True)
@@ -172,5 +181,4 @@ for msg in st.session_state.history:
                     snippet = doc.page_content[:300].strip().replace("\n", " ")
                     st.markdown(f'<div class="source-box">{i+1}. {source_info} - {snippet}...</div>', unsafe_allow_html=True)
 
-# Input at the bottom
 st.text_input(label="", key="input", on_change=handle_input, placeholder="Zadaj pytanie...")

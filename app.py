@@ -12,19 +12,19 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + chat bubbles CSS
+# Dark mode + chat bubbles CSS with improvements
 dark_mode_css = """
 <style>
     html, body, .block-container, main, .appview-container, .main {
-    background-color: #0a0f1f !important;
-    background-image: linear-gradient(135deg, #0a0f1f, #1e2238, #0a0f1f);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
-    color: #E0E0E0 !important;
-    min-height: 100vh !important;
-    height: 100% !important;
-}
+        background-color: #0a0f1f !important;
+        background-image: linear-gradient(135deg, #0a0f1f, #1e2238, #0a0f1f);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        color: #E0E0E0 !important;
+        min-height: 100vh !important;
+        height: 100% !important;
+    }
     html {
         overflow-x: hidden;
     }
@@ -36,29 +36,34 @@ dark_mode_css = """
     #MainMenu, footer, header {
         visibility: hidden;
     }
+    h1 {
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
+    }
     .user-msg {
         background-color: #1c1c2c;
         color: #eee;
         padding: 12px 18px;
         border-radius: 18px 18px 0 18px;
-        margin: 8px 0 8px 25%;
-        max-width: 60%;
+        margin: 8px 0 8px 12%;
+        max-width: 75%;
         text-align: right;
         float: right;
         clear: both;
         font-size: 15px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
     .bot-msg {
         background-color: #252540;
         color: #ddd;
         padding: 12px 18px;
         border-radius: 18px 18px 18px 0;
-        margin: 8px 25% 8px 0;
-        max-width: 60%;
+        margin: 8px 12% 8px 0;
+        max-width: 75%;
         text-align: left;
         float: left;
         clear: both;
         font-size: 15px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.6);
     }
     .clearfix::after {
         content: "";
@@ -67,14 +72,14 @@ dark_mode_css = """
     }
     .stTextInput>div>div>input {
         background-color: #222 !important;
-        color: #ccc !important;
+        color: #eee !important;       /* jaśniejszy tekst */
         border-radius: 8px;
         border: none;
         padding: 10px;
         font-size: 16px;
     }
     .stTextInput>div>div>input::placeholder {
-        color: #bbb !important;
+        color: #bbb !important;       /* jaśniejszy placeholder */
         opacity: 1 !important;
     }
     .source-box {

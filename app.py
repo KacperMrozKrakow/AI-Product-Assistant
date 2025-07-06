@@ -173,4 +173,4 @@ for msg in st.session_state.history:
                     st.markdown(f'<div class="source-box">{i+1}. {source_info} - {snippet}...</div>', unsafe_allow_html=True)
 
 # Input at the bottom
-st.text_input("Zadaj pytanie...", key="input", on_change=handle_input)
+st.text_input(label="", key="input", on_change=handle_input, placeholder="Zadaj pytanie...")

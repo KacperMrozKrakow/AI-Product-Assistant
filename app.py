@@ -13,24 +13,18 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
 # Dark mode + bubbles CSS with darker gradient and centered text + input style fix
+
 dark_mode_css = """
 <style>
-    html {
-        height: 100%;
-        background: linear-gradient(180deg, #05060d, #1a1c34, #2c2f57, #22223b) !important;
+    .main {
+        background: linear-gradient(180deg, #05060d, #1a1c34, #2c2f57, #22223b);
         background-attachment: fixed;
         background-size: cover;
-    }
-    body, .block-container {
-        background: transparent !important;
-        color: #E0E0E0 !important;
-        margin: 0;
+        min-height: 100vh;
         padding: 0 3rem 2rem 3rem;
     }
-    .css-18e3th9 {
+    .block-container {
         background-color: transparent !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
     }
     #MainMenu, footer, header {
         visibility: hidden;
@@ -82,6 +76,7 @@ dark_mode_css = """
         padding: 10px;
         margin-top: 10px;
         font-size: 13px;
+        color: #ddd;
     }
 </style>
 """

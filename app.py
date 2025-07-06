@@ -16,8 +16,7 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 dark_mode_css = """
 <style>
     html, body, .block-container {
-        background: linear-gradient(135deg, #05060d, #1a1c34, #2c2f57, #22223b) !important;
-        background-attachment: fixed;
+        background-color: #0a0f1f !important;
         color: #E0E0E0 !important;
         min-height: 100vh;
         margin: 0;
@@ -32,7 +31,7 @@ dark_mode_css = """
         visibility: hidden;
     }
     .user-msg {
-        background-color: #2a2a2a;
+        background-color: #1c1c2c;
         color: #eee;
         padding: 12px 18px;
         border-radius: 18px 18px 0 18px;
@@ -44,7 +43,7 @@ dark_mode_css = """
         font-size: 15px;
     }
     .bot-msg {
-        background-color: #333333;
+        background-color: #252540;
         color: #ddd;
         padding: 12px 18px;
         border-radius: 18px 18px 18px 0;
@@ -73,7 +72,7 @@ dark_mode_css = """
         opacity: 1 !important;
     }
     .source-box {
-        background-color: #1c1c1c;
+        background-color: #1a1a2b;
         border-radius: 10px;
         padding: 10px;
         margin-top: 10px;

@@ -15,14 +15,16 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 # Dark mode + chat bubbles CSS
 dark_mode_css = """
 <style>
-    html, body, .block-container {
+    html, body, .block-container, main, .appview-container, .main {
         background-color: #0a0f1f !important;
         color: #E0E0E0 !important;
-        min-height: 100vh;
-        margin: 0;
-        padding: 0 3rem 2rem 3rem;
+        min-height: 100vh !important;
+        height: 100% !important;
     }
-    .css-18e3th9 {
+    html {
+        overflow-x: hidden;
+    }
+    .css-18e3th9, .css-1dp5vir {
         background-color: transparent !important;
         padding-left: 0 !important;
         padding-right: 0 !important;
@@ -80,6 +82,7 @@ dark_mode_css = """
     }
 </style>
 """
+
 st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 # Title and description

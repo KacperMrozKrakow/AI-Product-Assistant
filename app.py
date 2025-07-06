@@ -12,7 +12,7 @@ token = os.getenv("HUGGINGFACEHUB_API_TOKEN")
 
 st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sidebar_state="collapsed")
 
-# Dark mode + bubbles CSS with darker gradient and centered text + input style fix
+# Dark mode + chat bubbles CSS
 dark_mode_css = """
 <style>
     html, body, .block-container {
@@ -22,9 +22,7 @@ dark_mode_css = """
         min-height: 100vh;
         margin: 0;
         padding: 0 3rem 2rem 3rem;
-        /* padding sides for text centering */
     }
-    /* Make Streamlit's main container transparent to show gradient */
     .css-18e3th9 {
         background-color: transparent !important;
         padding-left: 0 !important;
@@ -69,9 +67,7 @@ dark_mode_css = """
         border: none;
         padding: 10px;
         font-size: 16px;
-        /* Placeholder color */
     }
-    /* Placeholder text color */
     .stTextInput>div>div>input::placeholder {
         color: #bbb !important;
         opacity: 1 !important;
@@ -89,31 +85,23 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 
 # Title and description
 st.title("AI Product Assistant")
+
 st.markdown("""
-Ten inteligentny asystent odpowiada na pytania w oparciu o dokumenty (np. PDF-y z ofertami, instrukcjami, katalogami).  
-Możesz go wykorzystać np. jako wsparcie klienta — wystarczy załadować dokumenty, a użytkownik może zadawać pytania w języku naturalnym.  
-Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
+**🧠 Projekt demonstracyjny (RAG + LLM)** — chatbot wspierający klienta w decyzjach zakupowych.  
+Został stworzony jako przykład aplikacji **GenAI typu Retrieval-Augmented Generation (RAG)**  
+dla firm, które chcą umożliwić użytkownikowi zadawanie pytań na podstawie swoich ofert i katalogów produktowych.
+
+📄 Bot przeszukuje dokumenty w formacie PDF (np. dane techniczne, porównania, opisy modeli) i  
+odpowiada w języku naturalnym — wraz z cytatami ze źródeł.  
+Można go użyć np. w sklepie internetowym lub dziale obsługi klienta.
+
+🧪 Przykładowe pytania:
+- *Który telefon ma najwięcej RAM-u?*
+- *Czym różni się Galaxy S25 Ultra od S24 FE?*
+- *Czy Galaxy Z Flip 6 obsługuje Dual SIM?*
 
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
-# fast api
-st.markdown("---")
-st.subheader("📤 Dodaj nowy dokument (PDF/MD)")
-
-uploaded_file = st.file_uploader("Wybierz plik do przesłania", type=["pdf", "md"])
-
-if uploaded_file is not None:
-    with st.spinner("Wysyłam plik na serwer..."):
-        try:
-            files = {"file": (uploaded_file.name, uploaded_file.getvalue())}
-            response = requests.post("http://localhost:8000/upload/", files=files)
-            if response.status_code == 200:
-                st.success("Plik przesłany i baza wiedzy odświeżona!")
-                # Opcjonalnie: wyczyść historię czatu lub przeładuj vectorstore
-            else:
-                st.error(f"Błąd przesyłania: {response.text}")
-        except Exception as e:
-            st.error(f"Błąd połączenia z backendem: {e}")
 
 # Initialize chat history
 if "history" not in st.session_state:

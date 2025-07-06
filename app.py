@@ -25,6 +25,10 @@ dark_mode_css = """
         min-height: 100vh !important;
         height: 100% !important;
     }
+    body {
+        /* Tymczasowo, do testu czy CSS działa */
+        background-color: red !important;
+    }
     html {
         overflow-x: hidden;
     }
@@ -51,6 +55,7 @@ dark_mode_css = """
         clear: both;
         font-size: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        border: 1px solid red !important; /* do testu */
     }
     .bot-msg {
         background-color: #252540;
@@ -64,22 +69,14 @@ dark_mode_css = """
         clear: both;
         font-size: 15px;
         box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+        border: 1px solid green !important; /* do testu */
     }
-    .clearfix::after {
-        content: "";
-        clear: both;
-        display: table;
-    }
-    .stTextInput>div>div>input {
+    input[type="text"] {
+        color: white !important;
         background-color: #222 !important;
-        color: #eee !important;       /* jaśniejszy tekst */
-        border-radius: 8px;
-        border: none;
-        padding: 10px;
-        font-size: 16px;
     }
-    .stTextInput>div>div>input::placeholder {
-        color: #bbb !important;       /* jaśniejszy placeholder */
+    input[type="text"]::placeholder {
+        color: #bbb !important;
         opacity: 1 !important;
     }
     .source-box {

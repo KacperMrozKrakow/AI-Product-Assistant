@@ -79,7 +79,7 @@ dark_mode_css = """
         font-size: 16px;
     }
     .stTextInput>div>div>input::placeholder {
-        color: #bbb !important;       /* jaśniejszy placeholder */
+        color: #fff !important;       /* biały placeholder */
         opacity: 1 !important;
     }
     .source-box {
@@ -98,15 +98,15 @@ st.markdown(dark_mode_css, unsafe_allow_html=True)
 st.title("AI Product Assistant")
 
 st.markdown("""
-**🧠 Projekt demonstracyjny (RAG + LLM)** — chatbot wspierający klienta w decyzjach zakupowych.  
+**Projekt demonstracyjny (RAG + LLM)** — chatbot wspierający klienta w decyzjach zakupowych.  
 Został stworzony jako przykład aplikacji **GenAI typu Retrieval-Augmented Generation (RAG)**  
 dla firm, które chcą umożliwić użytkownikowi zadawanie pytań na podstawie swoich ofert i katalogów produktowych.
 
-📄 Bot przeszukuje dokumenty w formacie PDF (np. dane techniczne, porównania, opisy modeli) i  
+Bot przeszukuje dokumenty w formacie PDF (np. dane techniczne, porównania, opisy modeli) i  
 odpowiada w języku naturalnym — wraz z cytatami ze źródeł.  
 Można go użyć np. w sklepie internetowym lub dziale obsługi klienta.
 
-🧪 Przykładowe pytania:
+Przykładowe pytania:
 - *Który telefon ma najwięcej RAM-u?*
 - *Czym różni się Galaxy S25 Ultra od S24 FE?*
 - *Czy Galaxy Z Flip 6 obsługuje Dual SIM?*

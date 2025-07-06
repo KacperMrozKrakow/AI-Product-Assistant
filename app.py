@@ -16,11 +16,15 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 dark_mode_css = """
 <style>
     html, body, .block-container, main, .appview-container, .main {
-        background-color: #0a0f1f !important;
-        color: #E0E0E0 !important;
-        min-height: 100vh !important;
-        height: 100% !important;
-    }
+    background-color: #0a0f1f !important;
+    background-image: linear-gradient(135deg, #0a0f1f, #1e2238, #0a0f1f);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #E0E0E0 !important;
+    min-height: 100vh !important;
+    height: 100% !important;
+}
     html {
         overflow-x: hidden;
     }

@@ -5,6 +5,7 @@ from pathlib import Path
 from rag_pipeline import load_vectorstore, build_qa_chain
 from loader import load_documents
 from difflib import SequenceMatcher
+import requests
 
 # Load HuggingFace token
 load_dotenv()
@@ -105,6 +106,24 @@ Przykład: *"Czy produkt X obsługuje integrację z systemem Y?"*
 
 ⏳ **Poczekaj kilka sekund, aż aplikacja się załaduje...**
 """)
+# fast api
+st.markdown("---")
+st.subheader("📤 Dodaj nowy dokument (PDF/MD)")
+
+uploaded_file = st.file_uploader("Wybierz plik do przesłania", type=["pdf", "md"])
+
+if uploaded_file is not None:
+    with st.spinner("Wysyłam plik na serwer..."):
+        try:
+            files = {"file": (uploaded_file.name, uploaded_file.getvalue())}
+            response = requests.post("http://localhost:8000/upload/", files=files)
+            if response.status_code == 200:
+                st.success("Plik przesłany i baza wiedzy odświeżona!")
+                # Opcjonalnie: wyczyść historię czatu lub przeładuj vectorstore
+            else:
+                st.error(f"Błąd przesyłania: {response.text}")
+        except Exception as e:
+            st.error(f"Błąd połączenia z backendem: {e}")
 
 # Initialize chat history
 if "history" not in st.session_state:

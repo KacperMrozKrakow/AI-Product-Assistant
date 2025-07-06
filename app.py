@@ -1,11 +1,10 @@
-import streamlit as st
+import streamlit as st 
 from dotenv import load_dotenv
 import os
 from pathlib import Path
 from rag_pipeline import load_vectorstore, build_qa_chain
 from loader import load_documents
 from difflib import SequenceMatcher
-import requests
 
 # Load HuggingFace token
 load_dotenv()
@@ -16,29 +15,24 @@ st.set_page_config(page_title="AI Product Assistant", layout="wide", initial_sid
 # Dark mode + bubbles CSS with darker gradient and centered text + input style fix
 dark_mode_css = """
 <style>
-    .main::before {
-        content: "";
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(135deg, #05060d, #1a1c34, #2c2f57, #22223b);
-        background-size: cover;
-        background-repeat: no-repeat;
-        z-index: -1;
-    }
-
     html, body, .block-container {
-        background: transparent !important;
+        background: linear-gradient(135deg, #05060d, #1a1c34, #2c2f57, #22223b) !important;
+        background-attachment: fixed;
         color: #E0E0E0 !important;
+        min-height: 100vh;
+        margin: 0;
         padding: 0 3rem 2rem 3rem;
+        /* padding sides for text centering */
     }
-
+    /* Make Streamlit's main container transparent to show gradient */
+    .css-18e3th9 {
+        background-color: transparent !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
     #MainMenu, footer, header {
         visibility: hidden;
     }
-
     .user-msg {
         background-color: #2a2a2a;
         color: #eee;
@@ -51,7 +45,6 @@ dark_mode_css = """
         clear: both;
         font-size: 15px;
     }
-
     .bot-msg {
         background-color: #333333;
         color: #ddd;
@@ -64,13 +57,11 @@ dark_mode_css = """
         clear: both;
         font-size: 15px;
     }
-
     .clearfix::after {
         content: "";
         clear: both;
         display: table;
     }
-
     .stTextInput>div>div>input {
         background-color: #222 !important;
         color: #ccc !important;
@@ -78,20 +69,19 @@ dark_mode_css = """
         border: none;
         padding: 10px;
         font-size: 16px;
+        /* Placeholder color */
     }
-
+    /* Placeholder text color */
     .stTextInput>div>div>input::placeholder {
         color: #bbb !important;
         opacity: 1 !important;
     }
-
     .source-box {
         background-color: #1c1c1c;
         border-radius: 10px;
         padding: 10px;
         margin-top: 10px;
         font-size: 13px;
-        color: #ddd;
     }
 </style>
 """
